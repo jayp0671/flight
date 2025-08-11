@@ -1,0 +1,72 @@
+:root{
+  --bg: #0b0e13;
+  --card: #101522;
+  --text: #e9edf5;
+  --muted: #a9b4c2;
+  --glow1: #7cc0ff;
+  --glow2: #c79cff;
+}
+
+/* base */
+*{ box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body{
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 70% -10%, #1a2140 0%, transparent 60%),
+    var(--bg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+}
+
+/* layout helpers */
+.container{ width: min(1100px, 92%); margin: 0 auto; }
+.app{ min-height: 100dvh; display: flex; flex-direction: column; }
+.app-main{ flex: 1; padding: 24px 0 48px; }
+.page h1{ margin:0 0 10px; font-size: 28px; }
+.page p{ color: var(--muted); margin:0; }
+
+/* header / nav */
+.site-header{
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: saturate(140%) blur(10px);
+  background: rgba(11,14,19,0.7);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.site-header__inner{
+  width: min(1100px, 92%); margin: 0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 0;
+}
+.brand{ font-weight: 800; letter-spacing: .4px; }
+.nav{ display:flex; gap: 16px; }
+.nav a{
+  color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 10px;
+}
+.nav a.active{
+  color:var(--text);
+  outline:1px solid rgba(255,255,255,.08);
+  box-shadow:0 0 18px rgba(124,192,255,.18);
+}
+.nav a:hover{ color: var(--text); }
+
+/* footer */
+.site-footer{
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+}
+.site-footer__inner{ padding: 18px 0; color: var(--muted); }
+
+/* reusable buttons (pages can extend these) */
+.btn{
+  display:inline-block; padding: 10px 14px; border-radius: 12px;
+  text-decoration:none; font-weight:700;
+}
+.btn--primary{
+  color:#0b0e13; background: linear-gradient(90deg, var(--glow1), var(--glow2));
+  transition: transform .15s, box-shadow .2s;
+}
+.btn--primary:hover{ box-shadow:0 12px 30px rgba(124,192,255,.25); transform: translateY(-1px);}
+.btn--primary:active{ transform: translateY(0); box-shadow:0 6px 16px rgba(124,192,255,.18); }
+.btn--ghost{ color:var(--text); outline:1px solid rgba(255,255,255,.12); }
+.btn--ghost:hover{ outline-color: rgba(255,255,255,.22); }
