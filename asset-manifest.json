@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/flight/static/css/main.ecf13502.css",
-    "main.js": "/flight/static/js/main.ba05d229.js",
+    "main.js": "/flight/static/js/main.01557590.js",
     "index.html": "/flight/index.html",
     "main.ecf13502.css.map": "/flight/static/css/main.ecf13502.css.map",
-    "main.ba05d229.js.map": "/flight/static/js/main.ba05d229.js.map"
+    "main.01557590.js.map": "/flight/static/js/main.01557590.js.map"
   },
   "entrypoints": [
     "static/css/main.ecf13502.css",
-    "static/js/main.ba05d229.js"
+    "static/js/main.01557590.js"
   ]
 }
