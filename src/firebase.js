@@ -1,6 +1,6 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAl0VYLOaxYdJHOkcUxncYFrSkV3-otNxE",
@@ -8,11 +8,14 @@ const firebaseConfig = {
   projectId: "ewr-yhz-todo",
   storageBucket: "ewr-yhz-todo.firebasestorage.app",
   messagingSenderId: "324603826374",
-  appId: "1:324603826374:web:6d3d15389b855c192c07c7"
+  appId: "1:324603826374:web:6d3d15389b855c192c07c7",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Export Firestore
 export const db = getFirestore(app);
+
+// Optional but recommended: offline/refresh persistence
+enableIndexedDbPersistence(db).catch((err) => {
+  // Common: 'failed-precondition' (multiple tabs) or 'unimplemented' (old browser)
+  console.warn("Firestore persistence not enabled:", err?.code || err);
+});

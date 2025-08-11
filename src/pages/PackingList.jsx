@@ -2,38 +2,61 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db } from '../firebase';
 import {
-  collection, addDoc, deleteDoc, doc, onSnapshot,
-  updateDoc, serverTimestamp, query, orderBy, writeBatch
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  writeBatch,
 } from 'firebase/firestore';
 
 export default function PackingList() {
-  const [items, setItems] = useState([]);
+  // 1) Boot from localStorage so UI isn’t empty after reload
+  const [items, setItems] = useState(() => {
+    const cached = localStorage.getItem('packing_cache');
+    return cached ? JSON.parse(cached) : [];
+  });
   const [text, setText] = useState('');
   const [category, setCategory] = useState('');
   const [filter, setFilter] = useState('all'); // all | unchecked | checked
 
-  // Realtime listener
+  // 2) Realtime listener — order by a single field to avoid composite index issues
   useEffect(() => {
-    const q = query(collection(db, 'packing'), orderBy('category', 'asc'), orderBy('createdAt', 'asc'));
-    const unsub = onSnapshot(q, snap => {
-      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setItems(list);
-    });
+    const q = query(collection(db, 'packing'), orderBy('createdAt', 'asc'));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setItems(list);
+        // keep a local cache as a safety net
+        localStorage.setItem('packing_cache', JSON.stringify(list));
+      },
+      (err) => {
+        console.error('Firestore listener error:', err);
+        // fall back to cache so the UI never looks empty
+        const cached = localStorage.getItem('packing_cache');
+        if (cached) setItems(JSON.parse(cached));
+      },
+    );
     return () => unsub();
   }, []);
 
   // Derived: list of categories + grouping
   const categories = useMemo(() => {
-    const set = new Set(items.map(i => i.category).filter(Boolean));
+    const set = new Set(items.map((i) => i.category).filter(Boolean));
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [items]);
 
   const grouped = useMemo(() => {
     const g = new Map();
-    items.forEach(i => {
+    items.forEach((i) => {
       if (filter === 'unchecked' && i.checked) return;
       if (filter === 'checked' && !i.checked) return;
-      const key = i.category || 'Uncategorized';
+      const key = i.category?.trim() || 'Uncategorized';
       if (!g.has(key)) g.set(key, []);
       g.get(key).push(i);
     });
@@ -43,7 +66,7 @@ export default function PackingList() {
   async function addItem(e) {
     e.preventDefault();
     const t = text.trim();
-    const c = category.trim() || 'Misc';
+    const c = (category || '').trim() || 'Misc';
     if (!t) return;
     await addDoc(collection(db, 'packing'), {
       text: t,
@@ -52,7 +75,8 @@ export default function PackingList() {
       createdAt: serverTimestamp(),
     });
     setText('');
-    if (!categories.includes(c)) setCategory(c); // keep it selected
+    // keep the category field populated after adding
+    if (!categories.includes(c)) setCategory(c);
   }
 
   async function toggleItem(id, checked) {
@@ -66,19 +90,21 @@ export default function PackingList() {
   // Bulk ops per category
   async function markAllInCategory(cat, checked) {
     const batch = writeBatch(db);
-    items.filter(i => (i.category || 'Uncategorized') === cat)
-         .forEach(i => batch.update(doc(db, 'packing', i.id), { checked }));
+    items
+      .filter((i) => (i.category?.trim() || 'Uncategorized') === cat)
+      .forEach((i) => batch.update(doc(db, 'packing', i.id), { checked }));
     await batch.commit();
   }
 
   async function clearCheckedInCategory(cat) {
     const batch = writeBatch(db);
-    items.filter(i => (i.category || 'Uncategorized') === cat && i.checked)
-         .forEach(i => batch.delete(doc(db, 'packing', i.id)));
+    items
+      .filter((i) => (i.category?.trim() || 'Uncategorized') === cat && i.checked)
+      .forEach((i) => batch.delete(doc(db, 'packing', i.id)));
     await batch.commit();
   }
 
-  const remaining = items.filter(i => !i.checked).length;
+  const remaining = items.filter((i) => !i.checked).length;
 
   return (
     <div className="container">
@@ -94,18 +120,20 @@ export default function PackingList() {
             type="text"
             placeholder="Add an item…"
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             aria-label="Item name"
           />
           <input
             list="catOptions"
             placeholder="Category (e.g., Toiletries)"
             value={category}
-            onChange={e => setCategory(e.target.value)}
+            onChange={(e) => setCategory(e.target.value)}
             aria-label="Category"
           />
           <datalist id="catOptions">
-            {categories.map(c => <option key={c} value={c} />)}
+            {categories.map((c) => (
+              <option key={c} value={c} />
+            ))}
           </datalist>
           <button type="submit">Add</button>
         </form>
@@ -113,30 +141,54 @@ export default function PackingList() {
         {/* Filters + count */}
         <div className="packing__controls">
           <div className="filters">
-            <button className={filter==='all'?'active':''} type="button" onClick={()=>setFilter('all')}>All</button>
-            <button className={filter==='unchecked'?'active':''} type="button" onClick={()=>setFilter('unchecked')}>To pack</button>
-            <button className={filter==='checked'?'active':''} type="button" onClick={()=>setFilter('checked')}>Packed</button>
+            <button
+              className={filter === 'all' ? 'active' : ''}
+              type="button"
+              onClick={() => setFilter('all')}
+            >
+              All
+            </button>
+            <button
+              className={filter === 'unchecked' ? 'active' : ''}
+              type="button"
+              onClick={() => setFilter('unchecked')}
+            >
+              To pack
+            </button>
+            <button
+              className={filter === 'checked' ? 'active' : ''}
+              type="button"
+              onClick={() => setFilter('checked')}
+            >
+              Packed
+            </button>
           </div>
           <div className="muted">{remaining} left</div>
         </div>
 
         {/* Category cards */}
         <div className="packing-list">
-          {Array.from(grouped.keys()).map(cat => {
+          {Array.from(grouped.keys()).map((cat) => {
             const list = grouped.get(cat) || [];
             return (
               <div className="packing-card" key={cat}>
                 <div className="packing-card__head">
                   <h2>{cat}</h2>
                   <div className="card-actions">
-                    <button type="button" onClick={() => markAllInCategory(cat, true)}>Mark all packed</button>
-                    <button type="button" onClick={() => markAllInCategory(cat, false)}>Mark all unpacked</button>
-                    <button type="button" onClick={() => clearCheckedInCategory(cat)}>Clear packed</button>
+                    <button type="button" onClick={() => markAllInCategory(cat, true)}>
+                      Mark all packed
+                    </button>
+                    <button type="button" onClick={() => markAllInCategory(cat, false)}>
+                      Mark all unpacked
+                    </button>
+                    <button type="button" onClick={() => clearCheckedInCategory(cat)}>
+                      Clear packed
+                    </button>
                   </div>
                 </div>
 
                 <ul>
-                  {list.map(item => (
+                  {list.map((item) => (
                     <li key={item.id}>
                       <label>
                         <input
@@ -144,9 +196,17 @@ export default function PackingList() {
                           checked={!!item.checked}
                           onChange={() => toggleItem(item.id, !!item.checked)}
                         />
-                        <span className={item.checked ? 'checked' : ''}>{item.text ?? ''}</span>
+                        <span className={item.checked ? 'checked' : ''}>
+                          {item.text ?? ''}
+                        </span>
                       </label>
-                      <button className="remove" onClick={() => removeItem(item.id)} aria-label="Remove">✕</button>
+                      <button
+                        className="remove"
+                        onClick={() => removeItem(item.id)}
+                        aria-label="Remove"
+                      >
+                        ✕
+                      </button>
                     </li>
                   ))}
                   {list.length === 0 && <li className="empty muted">No items.</li>}
