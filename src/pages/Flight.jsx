@@ -3,36 +3,36 @@ import React from 'react';
 export default function Flight() {
   const trips = [
     {
-      kind: 'Departing flight',
-      routeLine: 'New York, US (EWR) → Halifax, CA (YHZ)',
-      dateLong: 'Tue, Nov 18, 2025',
-      fromCode: 'EWR',
-      fromCity: 'New York',
-      depart: '13:00',
-      toCode: 'YHZ',
-      toCity: 'Halifax',
-      arrive: '16:14',
-      nonstopLabel: 'Non‑stop • 2h 14m',
-      flightNo: 'AC 2566',
-      note: 'Includes travel operated by Air Canada Express ‑ PAL Airlines.',
-      cabin: 'Economy — Basic',
-      pax: '1 Adult',
+      kind: 'Upcoming Flight',
+      routeLine: 'TBD → TBD',
+      dateLong: 'Date: TBD',
+      fromCode: 'TBD',
+      fromCity: 'TBD',
+      depart: 'TBD',
+      toCode: 'TBD',
+      toCity: 'TBD',
+      arrive: 'TBD',
+      nonstopLabel: 'TBD • TBD',
+      flightNo: 'TBD',
+      note: 'Details coming soon.',
+      cabin: 'TBD Cabin',
+      pax: 'TBD',
     },
     {
-      kind: 'Return flight',
-      routeLine: 'Halifax, CA (YHZ) → New York, US (EWR)',
-      dateLong: 'Sun, Dec 07, 2025',
-      fromCode: 'YHZ',
-      fromCity: 'Halifax',
-      depart: '10:30',
-      toCode: 'EWR',
-      toCity: 'New York',
-      arrive: '12:18',
-      nonstopLabel: 'Non‑stop • 2h 48m',
-      flightNo: 'AC 2567',
-      note: 'Includes travel operated by Air Canada Express ‑ PAL Airlines.',
-      cabin: 'Economy — Basic',
-      pax: '1 Adult',
+      kind: 'Return Flight (TBD)',
+      routeLine: 'TBD → TBD',
+      dateLong: 'Date: TBD',
+      fromCode: 'TBD',
+      fromCity: 'TBD',
+      depart: 'TBD',
+      toCode: 'TBD',
+      toCity: 'TBD',
+      arrive: 'TBD',
+      nonstopLabel: 'TBD • TBD',
+      flightNo: 'TBD',
+      note: 'Details coming soon.',
+      cabin: 'TBD Cabin',
+      pax: 'TBD',
     },
   ];
 
@@ -41,7 +41,7 @@ export default function Flight() {
       <section className="flight">
         <header className="flight__header">
           <h1>The Flight</h1>
-          <p className="route">EWR ✈ YHZ ↺</p>
+          <p className="route">TBD ✈ TBD ↺</p>
         </header>
 
         <div className="trip-list">
@@ -64,12 +64,10 @@ export default function Flight() {
                   <div className="tl__col tl__col--left">
                     <div className="time">{t.depart}</div>
                     <div className="city">{t.fromCity}</div>
-                    {/* removed extra dot here */}
                   </div>
 
                   <div className="tl__col tl__col--bar">
                     <div className="bar">
-                      {/* removed the moving runner */}
                       <span className="bar__plane" aria-hidden="true">✈</span>
                     </div>
                     <div className="stops">{t.nonstopLabel}</div>
@@ -78,7 +76,6 @@ export default function Flight() {
                   <div className="tl__col tl__col--right">
                     <div className="time">{t.arrive}</div>
                     <div className="city">{t.toCity}</div>
-                    {/* removed extra dot here */}
                   </div>
                 </div>
 
@@ -98,11 +95,11 @@ export default function Flight() {
         </div>
 
         <footer className="flight__footer">
-          <small>Times shown are local to each airport.</small>
+          <small>Times shown are local to each airport (TBD).</small>
         </footer>
       </section>
 
-      {/* page‑scoped styles */}
+      {/* page-scoped styles */}
       <style>{css}</style>
     </div>
   );

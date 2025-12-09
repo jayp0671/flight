@@ -12,11 +12,12 @@ export default function FlightHero() {
 
       {/* Copy */}
       <div className="hero__copy">
-        <h1 className="hero__title">The Long Awaited November Trip</h1>
-        <p className="hero__sub">Almost There Love ♡</p>
+        <h1 className="hero__title">Next Trip Loading… ✈️</h1>
+        <p className="hero__sub">When am I coming next, love?</p>
+
         <div className="hero__cta">
           <a href="#/flight" className="btn btn--primary">View Itinerary</a>
-          <a href="#/packing" className="btn btn--ghost">Open Packing List</a>
+          <a href="#/packing" className="btn btn--ghost">Packing List</a>
         </div>
       </div>
 
@@ -37,7 +38,7 @@ export default function FlightHero() {
             <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity=".35" />
           </filter>
 
-          {/* tiny airplane shape */}
+          {/* tiny airplane */}
           <g id="plane-shape">
             <g transform="scale(0.9)">
               <rect x="-10" y="-3" width="26" height="6" rx="2" ry="2" fill="#fff"/>
@@ -49,7 +50,7 @@ export default function FlightHero() {
           </g>
         </defs>
 
-        {/* base (dashed) infinity */}
+        {/* dashed infinity path */}
         <path
           id="flight-path"
           className="flight-path"
@@ -62,7 +63,7 @@ export default function FlightHero() {
           "
         />
 
-        {/* optional glowing sweep (set stroke to transparent to hide) */}
+        {/* glowing sweep (optional) */}
         <path
           className="flight-path flight-path--accent"
           d="
@@ -73,12 +74,12 @@ export default function FlightHero() {
             C 480,400 260,400 260,260
           "
           pathLength="1"
-            style={{ strokeDasharray: '0.12 1', stroke: 'transparent' }}
+          style={{ strokeDasharray: '0.12 1', stroke: 'transparent' }}
         >
           <animate attributeName="stroke-dashoffset" from="0" to="-1" dur="7s" repeatCount="indefinite" />
         </path>
 
-        {/* plane */}
+        {/* plane animation */}
         <g style={{ filter: 'url(#planeShadow)' }}>
           <use href="#plane-shape">
             <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">

@@ -6,6 +6,7 @@ import Flight from './pages/Flight.jsx';
 import PackingList from './pages/PackingList';
 import TodoPage from './pages/TodoPage.jsx';
 import GamePage from './pages/GamePage.jsx'; // ✅ mini‑game
+import FoodHub from './pages/FoodHub.jsx';
 
 function Layout() {
   return (
@@ -30,6 +31,7 @@ const router = createHashRouter([
       { path: 'todo', element: <TodoPage /> },
       { path: 'packing', element: <PackingList /> },
       { path: 'game', element: <GamePage /> },      // ✅ new route
+      { path: 'food', element: <FoodHub /> },
     ],
   },
 ]);
@@ -92,7 +94,7 @@ function Countdown({ target }) {
     // within 15 minutes after target
     label = 'Boarding';
   } else {
-    label = 'Landed';
+    label = 'Countdown Loading...';
   }
 
   return <span className="countdown-badge">{label}</span>;
