@@ -4,35 +4,35 @@ export default function Flight() {
   const trips = [
     {
       kind: 'Upcoming Flight',
-      routeLine: 'TBD → TBD',
-      dateLong: 'Date: TBD',
-      fromCode: 'TBD',
-      fromCity: 'TBD',
-      depart: 'TBD',
-      toCode: 'TBD',
-      toCity: 'TBD',
-      arrive: 'TBD',
-      nonstopLabel: 'TBD • TBD',
-      flightNo: 'TBD',
-      note: 'Details coming soon.',
-      cabin: 'TBD Cabin',
-      pax: 'TBD',
+      routeLine: 'EWR → YHZ',
+      dateLong: 'Date: February 45, 2026',
+      fromCode: 'EWR',
+      fromCity: 'Newark',
+      depart: '12:34 PM',
+      toCode: 'YHZ',
+      toCity: 'Halifax',
+      arrive: '56:78 PM',
+      nonstopLabel: '6h 7m • Nonstop',
+      flightNo: 'AC 6767',
+      note: 'Dont think about it too much.',
+      cabin: 'Basic Economy',
+      pax: '1 Adult',
     },
     {
-      kind: 'Return Flight (TBD)',
-      routeLine: 'TBD → TBD',
-      dateLong: 'Date: TBD',
-      fromCode: 'TBD',
-      fromCity: 'TBD',
-      depart: 'TBD',
-      toCode: 'TBD',
-      toCity: 'TBD',
-      arrive: 'TBD',
-      nonstopLabel: 'TBD • TBD',
-      flightNo: 'TBD',
-      note: 'Details coming soon.',
-      cabin: 'TBD Cabin',
-      pax: 'TBD',
+      kind: 'Return Flight',
+      routeLine: 'YHZ → EWR',
+      dateLong: 'Date: February 55, 2026',
+      fromCode: 'YHZ',
+      fromCity: 'Halifax',
+      depart: '10:30 AM',
+      toCode: 'EWR',
+      toCity: 'Newark',
+      arrive: '12:18 PM',
+      nonstopLabel: '2h 48m • Nonstop',
+      flightNo: 'AC 7676',
+      note: 'Sad Halifax goodbye again',
+      cabin: 'Basic Economy',
+      pax: '1 Adult',
     },
   ];
 
@@ -41,7 +41,7 @@ export default function Flight() {
       <section className="flight">
         <header className="flight__header">
           <h1>The Flight</h1>
-          <p className="route">TBD ✈ TBD ↺</p>
+          <p className="route">EWR ✈ YHZ ↺</p>
         </header>
 
         <div className="trip-list">
@@ -95,7 +95,7 @@ export default function Flight() {
         </div>
 
         <footer className="flight__footer">
-          <small>Times shown are local to each airport (TBD).</small>
+          <small>Times shown are local to each airport.</small>
         </footer>
       </section>
 
