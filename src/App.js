@@ -94,7 +94,7 @@ function Countdown({ target }) {
     // within 15 minutes after target
     label = 'Boarding';
   } else {
-    label = 'I have a countdown you dont hehe';
+    label = 'Arrived';
   }
 
   return <span className="countdown-badge">{label}</span>;

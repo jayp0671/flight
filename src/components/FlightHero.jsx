@@ -12,8 +12,8 @@ export default function FlightHero() {
 
       {/* Copy */}
       <div className="hero__copy">
-        <h1 className="hero__title">Next Trip Loading… ✈️</h1>
-        <p className="hero__sub">When am I coming next, love?</p>
+        <h1 className="hero__title">Valentine's Day Trip! ✈️</h1>
+        <p className="hero__sub">And pre MCAT destressor!</p>
 
         <div className="hero__cta">
           <a href="#/flight" className="btn btn--primary">View Itinerary</a>
