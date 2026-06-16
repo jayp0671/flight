@@ -1,216 +1,529 @@
 import React from 'react';
+import { TRIP, FLIGHTS } from '../config/trip';
 
-export default function Flight() {
-  const trips = [
-    {
-      kind: 'Upcoming Flight',
-      routeLine: 'EWR → YHZ',
-      dateLong: 'Date: February 45, 2026',
-      fromCode: 'EWR',
-      fromCity: 'Newark',
-      depart: '12:34 PM',
-      toCode: 'YHZ',
-      toCity: 'Halifax',
-      arrive: '56:78 PM',
-      nonstopLabel: '6h 7m • Nonstop',
-      flightNo: 'AC 6767',
-      note: 'Dont think about it too much.',
-      cabin: 'Basic Economy',
-      pax: '1 Adult',
-    },
-    {
-      kind: 'Return Flight',
-      routeLine: 'YHZ → EWR',
-      dateLong: 'Date: February 55, 2026',
-      fromCode: 'YHZ',
-      fromCity: 'Halifax',
-      depart: '10:30 AM',
-      toCode: 'EWR',
-      toCity: 'Newark',
-      arrive: '12:18 PM',
-      nonstopLabel: '2h 48m • Nonstop',
-      flightNo: 'AC 7676',
-      note: 'Sad Halifax goodbye again',
-      cabin: 'Basic Economy',
-      pax: '1 Adult',
-    },
-  ];
+function FlightCard({ flight }) {
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div className="container">
-      <section className="flight">
-        <header className="flight__header">
-          <h1>The Flight</h1>
-          <p className="route">EWR ✈ YHZ ↺</p>
-        </header>
-
-        <div className="trip-list">
-          {trips.map((t, i) => (
-            <article className="trip" key={i}>
-              <div className="trip__head">
-                <div className="trip__kind">{t.kind}</div>
-                <div className="trip__meta">
-                  <span className="chip">{t.cabin}</span>
-                  <span className="chip">{t.pax}</span>
-                </div>
-              </div>
-
-              <div className="trip__route">
-                <div className="route-line">
-                  {t.routeLine} <span className="date">• {t.dateLong}</span>
-                </div>
-
-                <div className="timeline">
-                  <div className="tl__col tl__col--left">
-                    <div className="time">{t.depart}</div>
-                    <div className="city">{t.fromCity}</div>
-                  </div>
-
-                  <div className="tl__col tl__col--bar">
-                    <div className="bar">
-                      <span className="bar__plane" aria-hidden="true">✈</span>
-                    </div>
-                    <div className="stops">{t.nonstopLabel}</div>
-                  </div>
-
-                  <div className="tl__col tl__col--right">
-                    <div className="time">{t.arrive}</div>
-                    <div className="city">{t.toCity}</div>
-                  </div>
-                </div>
-
-                <div className="codes">
-                  <span className="code">{t.fromCode}</span>
-                  <span className="arrow">⟶</span>
-                  <span className="code">{t.toCode}</span>
-                </div>
-              </div>
-
-              <div className="trip__foot">
-                <div className="flightno">Flight {t.flightNo}</div>
-                <div className="note">{t.note}</div>
-              </div>
-            </article>
-          ))}
+    <article className="flight-card">
+      <div className="flight-card__top">
+        <div>
+          <p className="flight-label">{flight.label}</p>
+          <h2>
+            {flight.from}
+            <span>→</span>
+            {flight.to}
+          </h2>
+          <p className="flight-date">{flight.date}</p>
         </div>
 
-        <footer className="flight__footer">
-          <small>Times shown are local to each airport.</small>
-        </footer>
-      </section>
+        <span className="flight-badge">{flight.badge}</span>
+      </div>
 
-      {/* page-scoped styles */}
-      <style>{css}</style>
-    </div>
+      <div className="flight-route">
+        <div className="airport-block">
+          <strong>{flight.from}</strong>
+          <span>{flight.fromName}</span>
+          <b>{flight.departTime}</b>
+        </div>
+
+        <div className="route-middle">
+          <span className="route-line" />
+          <span className="route-plane">✈</span>
+          <span className="route-line" />
+          <small>{flight.duration}</small>
+        </div>
+
+        <div className="airport-block airport-block--right">
+          <strong>{flight.to}</strong>
+          <span>{flight.toName}</span>
+          <b>{flight.arriveTime}</b>
+        </div>
+      </div>
+
+      <div className="flight-meta">
+        <div>
+          <span>Airline</span>
+          <strong>{flight.airline}</strong>
+        </div>
+        <div>
+          <span>Flight</span>
+          <strong>{flight.flightNumber}</strong>
+        </div>
+        <div>
+          <span>Cabin</span>
+          <strong>{flight.cabin}</strong>
+        </div>
+        <div>
+          <span>Gate</span>
+          <strong>{flight.gate}</strong>
+        </div>
+      </div>
+
+      <button
+        className="dropdown-toggle"
+        type="button"
+        onClick={() => setIsOpen((current) => !current)}
+        aria-expanded={isOpen}
+      >
+        <span>{isOpen ? 'Hide details' : 'Check-in info & details'}</span>
+        <b>{isOpen ? '−' : '+'}</b>
+      </button>
+
+      {isOpen && (
+        <div className="dropdown-panel">
+          <div className="dropdown-grid">
+            <section>
+              <h3>Check-in</h3>
+              <ul>
+                {flight.checkIn.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+
+            <section>
+              <h3>Baggage / reminders</h3>
+              <ul>
+                {flight.baggage.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          </div>
+
+          <div className="details-strip">
+            <div>
+              <span>Terminal</span>
+              <strong>{flight.terminal}</strong>
+            </div>
+            <div>
+              <span>Aircraft</span>
+              <strong>{flight.aircraft}</strong>
+            </div>
+            <div>
+              <span>Confirmation</span>
+              <strong>{flight.confirmation}</strong>
+            </div>
+          </div>
+        </div>
+      )}
+    </article>
   );
 }
 
-/* ---------------- CSS (scoped) ---------------- */
+export default function Flight() {
+  return (
+    <section className="itinerary-page">
+      <div className="itinerary-shell">
+        <div className="itinerary-header">
+          <div>
+            <p className="route-label">{TRIP.route}</p>
+            <h1>Your Itinerary</h1>
+            <p className="trip-date">
+              Two flights, one trip, everything in one place.
+            </p>
+          </div>
+
+          <a href="#/packing" className="packing-link">
+            Open packing list
+          </a>
+        </div>
+
+        <div className="flight-list">
+          {FLIGHTS.map((flight) => (
+            <FlightCard key={flight.id} flight={flight} />
+          ))}
+        </div>
+      </div>
+
+      <style>{css}</style>
+    </section>
+  );
+}
+
 const css = `
-.flight{
-  display:grid; gap:18px;
-  padding: 8px 0 28px;
-}
-.flight__header{
-  display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-}
-.flight__header h1{ margin:0; font-size: clamp(24px, 4vw, 36px); }
-.flight__header .route{
-  margin:0; color:var(--muted);
-  font-weight:700; letter-spacing:.6px;
+.itinerary-page {
+  min-height: calc(100vh - 76px);
+  padding: 68px 24px;
 }
 
-.trip-list{ display:grid; gap:16px; }
-
-.trip{
-  background: linear-gradient(180deg, rgba(16,21,34,.85), rgba(12,15,22,.78));
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 10px 28px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.04);
+.itinerary-shell {
+  width: min(100%, 1120px);
+  margin: 0 auto;
 }
 
-.trip__head{
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;
-}
-.trip__kind{ font-weight:800; letter-spacing:.2px; }
-.trip__meta{ display:flex; gap:8px; }
-.chip{
-  font-size:12px; color:var(--text);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:999px; padding:6px 10px; opacity:.9;
-  background: rgba(255,255,255,.02);
+.itinerary-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
 }
 
-.trip__route{ display:grid; gap:8px; }
-.trip__route .route-line{ color:var(--text); font-weight:600; }
-.trip__route .route-line .date{ color:var(--muted); font-weight:500; }
-
-/* timeline */
-.timeline{
-  display:grid;
-  grid-template-columns: 140px 1fr 140px;
-  align-items:center; gap:12px;
-  margin-top:4px;
-}
-.tl__col .time{ font-weight:800; }
-.tl__col .city{ color:var(--muted); font-size:14px; }
-
-/* the bar that fits exactly between start and end columns */
-.tl__col--bar .bar{
-  position:relative; height:2px; background:rgba(255,255,255,.14);
-  border-radius:999px; overflow:visible;
+.route-label {
+  margin: 0 0 10px;
+  color: var(--accent-3);
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
 }
 
-/* the ONLY two end dots (no extra floating ones) */
-.tl__col--bar .bar::before,
-.tl__col--bar .bar::after{
-  content:""; position:absolute; top:50%; width:10px; height:10px; border-radius:50%;
-  background:#fff; transform:translateY(-50%);
-  box-shadow: 0 0 0 3px rgba(255,255,255,.15);
-}
-.tl__col--bar .bar::before{ left:-5px; }  /* start dot */
-.tl__col--bar .bar::after{ right:-5px; }  /* end dot */
-
-/* PLANE ping‑pong animation (loops back and forth) */
-/* PLANE ping‑pong animation across full bar width */
-.bar__plane{
-  position:absolute;
-  top:-7.5px;
-  left:-5px;           /* start just before the left dot (which sits at -5px) */
-  width:16px;          /* plane glyph width for math below */
-  font-size:16px;
-  line-height:16px;
-  display:inline-block;
-  transform-origin:center;
-  animation: planePing 10s ease-in-out infinite;
+.itinerary-header h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(48px, 7vw, 84px);
+  line-height: 0.92;
+  letter-spacing: -0.075em;
+  font-weight: 950;
+  text-shadow: 0 18px 52px rgba(9, 6, 18, 0.42);
 }
 
-@keyframes planePing{
-  0%   { left: -5px;                transform: scaleX(1); }                 /* at left dot */
-  49.9%{ left: calc(100% - 26px);   transform: scaleX(1); }                 /* just before right dot */
-  50%  { left: calc(100% - 26px);   transform: scaleX(-1); }                /* flip instantly */
-  100% { left: -5px;                transform: scaleX(-1); }                /* back to start */
+.trip-date {
+  margin: 14px 0 0;
+  color: var(--text-soft);
+  font-size: 17px;
+  font-weight: 700;
 }
 
-.stops{ color:var(--muted); font-size:13px; margin-top:6px; }
-
-/* codes row */
-.codes{
-  display:flex; align-items:center; gap:8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  padding-top:4px;
+.packing-link {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0 18px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 18px 42px rgba(255, 122, 184, 0.22);
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.code{
-  padding:4px 8px; border-radius:8px; background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08); font-weight:800; letter-spacing:.8px;
-}
-.arrow{ opacity:.6; }
 
-.trip__foot{
-  margin-top:10px; display:grid; gap:4px; color:var(--muted); font-size:13px;
+.packing-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 52px rgba(255, 122, 184, 0.28);
 }
-.flightno{ color:var(--text); font-weight:700; }
 
-.flight__footer{ margin-top:6px; color:var(--muted); }
+.flight-list {
+  display: grid;
+  gap: 20px;
+}
+
+.flight-card {
+  overflow: hidden;
+  border-radius: 34px;
+  padding: clamp(22px, 4vw, 34px);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.055)),
+    rgba(21, 15, 34, 0.52);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 28px 90px rgba(9, 6, 18, 0.28);
+  backdrop-filter: blur(20px);
+}
+
+.flight-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.flight-label {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.flight-card h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--text);
+  font-size: clamp(38px, 6vw, 68px);
+  line-height: 0.9;
+  letter-spacing: -0.075em;
+  font-weight: 950;
+}
+
+.flight-card h2 span {
+  color: var(--accent-3);
+  font-size: 0.46em;
+  letter-spacing: 0;
+}
+
+.flight-date {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.flight-badge {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.flight-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 240px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.11);
+}
+
+.airport-block {
+  display: grid;
+  gap: 7px;
+}
+
+.airport-block--right {
+  text-align: right;
+}
+
+.airport-block strong {
+  color: var(--text);
+  font-size: clamp(42px, 7vw, 76px);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+  font-weight: 950;
+}
+
+.airport-block span {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.airport-block b {
+  color: var(--accent-3);
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.route-middle {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.route-plane {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 16px 36px rgba(255, 122, 184, 0.22);
+}
+
+.route-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.36), transparent);
+}
+
+.route-middle small {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.flight-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.flight-meta div {
+  min-height: 76px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 15px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.flight-meta span,
+.details-strip span {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flight-meta strong,
+.details-strip strong {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 950;
+}
+
+.dropdown-toggle {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 16px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-radius: 18px;
+  color: var(--text);
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  font-weight: 950;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.dropdown-toggle:hover {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.dropdown-toggle b {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  font-size: 18px;
+  line-height: 1;
+}
+
+.dropdown-panel {
+  margin-top: 14px;
+  padding: 20px;
+  border-radius: 24px;
+  background: rgba(9, 6, 18, 0.24);
+  border: 1px solid rgba(255,255,255,0.11);
+}
+
+.dropdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.dropdown-panel h3 {
+  margin: 0 0 12px;
+  color: var(--accent-3);
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dropdown-panel ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-soft);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.details-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.details-strip div {
+  display: grid;
+  gap: 5px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.075);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 840px) {
+  .itinerary-header,
+  .flight-card__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .flight-route {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .airport-block--right {
+    text-align: center;
+  }
+
+  .route-middle {
+    display: flex;
+    justify-content: center;
+  }
+
+  .route-line {
+    width: 70px;
+  }
+
+  .flight-meta,
+  .dropdown-grid,
+  .details-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .itinerary-page {
+    padding: 42px 16px;
+  }
+
+  .flight-card {
+    border-radius: 26px;
+  }
+
+  .flight-card h2 {
+    flex-wrap: wrap;
+  }
+
+  .flight-meta,
+  .dropdown-grid,
+  .details-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-route {
+    padding: 18px;
+    border-radius: 22px;
+  }
+}
 `;

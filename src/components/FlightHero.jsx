@@ -1,183 +1,290 @@
 import React from 'react';
+import { TRIP } from '../config/trip';
+
+const TARGET_DATE = new Date(TRIP.countdownTarget);
+
+function getTimeLeft() {
+  const now = new Date();
+  const diff = Math.max(TARGET_DATE.getTime() - now.getTime(), 0);
+  const totalSeconds = Math.floor(diff / 1000);
+
+  return {
+    days: Math.floor(totalSeconds / 86400),
+    hours: Math.floor((totalSeconds % 86400) / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
+  };
+}
+
+function pad(value) {
+  return String(value).padStart(2, '0');
+}
+
+function TimeBlock({ value, label }) {
+  return (
+    <div className="hero-time-block">
+      <span className="hero-time-value">{value}</span>
+      <span className="hero-time-label">{label}</span>
+    </div>
+  );
+}
 
 export default function FlightHero() {
+  const [timeLeft, setTimeLeft] = React.useState(getTimeLeft);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="hero">
-      <div className="hero__bg"><div className="hero__stars" /></div>
+    <section className="photo-hero">
+      <div className="photo-hero__content">
+        <p className="hero-route">{TRIP.route}</p>
 
-      {/* Clouds */}
-      <div className="cloud cloud--1" />
-      <div className="cloud cloud--2" />
-      <div className="cloud cloud--3" />
+        <h1>{TRIP.title}</h1>
 
-      {/* Copy */}
-      <div className="hero__copy">
-        <h1 className="hero__title">Next Trip Loading… ✈️</h1>
-        <p className="hero__sub">When am I coming next, love?</p>
+        <p className="hero-copy">{TRIP.heroSubtitle}</p>
 
-        <div className="hero__cta">
-          <a href="#/flight" className="btn btn--primary">View Itinerary</a>
-          <a href="#/packing" className="btn btn--ghost">Packing List</a>
+        <div className="hero-countdown">
+          <TimeBlock value={timeLeft.days} label="Days" />
+          <TimeBlock value={pad(timeLeft.hours)} label="Hours" />
+          <TimeBlock value={pad(timeLeft.minutes)} label="Minutes" />
+          <TimeBlock value={pad(timeLeft.seconds)} label="Seconds" />
+        </div>
+
+        <p className="hero-date">{TRIP.displayDate}</p>
+
+        <div className="hero-actions">
+          <a href="#/flight" className="btn-primary">
+            View itinerary
+          </a>
+          <a href="#/packing" className="btn-secondary">
+            Packing list
+          </a>
+        </div>
+
+        <div className="hero-shortcuts">
+          <a href="#/flight">
+            <span>✈</span>
+            Flight Details
+          </a>
+          <a href="#/todo">
+            <span>☑</span>
+            To-Do List
+          </a>
+          <a href="#/packing">
+            <span>▣</span>
+            Packing List
+          </a>
+          <a href="#/game">
+            <span>♡</span>
+            Play Game
+          </a>
         </div>
       </div>
 
-      {/* Infinity loop + plane */}
-      <svg
-        viewBox="0 0 1200 520"
-        className="flight-svg"
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="flight-grad" x1="0" x2="1">
-            <stop offset="0%" stopColor="var(--glow1)" />
-            <stop offset="100%" stopColor="var(--glow2)" />
-          </linearGradient>
-
-          <filter id="planeShadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity=".35" />
-          </filter>
-
-          {/* tiny airplane */}
-          <g id="plane-shape">
-            <g transform="scale(0.9)">
-              <rect x="-10" y="-3" width="26" height="6" rx="2" ry="2" fill="#fff"/>
-              <polygon points="16,-3 26,0 16,3" fill="#fff"/>
-              <polygon points="-10,-3 -16,-8 -8,-3" fill="#fff"/>
-              <polygon points="-2,-2 10,0 -2,2 -12,6" fill="#fff"/>
-              <polygon points="-2,-2 -12,-6 -2,2 10,0" fill="#fff" opacity=".9"/>
-            </g>
-          </g>
-        </defs>
-
-        {/* dashed infinity path */}
-        <path
-          id="flight-path"
-          className="flight-path"
-          d="
-            M 260,260
-            C 260,120 480,120 600,260
-            C 720,400 940,400 940,260
-            C 940,120 720,120 600,260
-            C 480,400 260,400 260,260
-          "
-        />
-
-        {/* glowing sweep (optional) */}
-        <path
-          className="flight-path flight-path--accent"
-          d="
-            M 260,260
-            C 260,120 480,120 600,260
-            C 720,400 940,400 940,260
-            C 940,120 720,120 600,260
-            C 480,400 260,400 260,260
-          "
-          pathLength="1"
-          style={{ strokeDasharray: '0.12 1', stroke: 'transparent' }}
-        >
-          <animate attributeName="stroke-dashoffset" from="0" to="-1" dur="7s" repeatCount="indefinite" />
-        </path>
-
-        {/* plane animation */}
-        <g style={{ filter: 'url(#planeShadow)' }}>
-          <use href="#plane-shape">
-            <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
-              <mpath href="#flight-path" />
-            </animateMotion>
-          </use>
-        </g>
-      </svg>
-
-      {/* page-scoped CSS */}
       <style>{css}</style>
     </section>
   );
 }
 
-/* ----- CSS scoped to the hero (keeps globals clean) ----- */
 const css = `
-.hero{
+.photo-hero {
   position: relative;
+  min-height: calc(100vh - 76px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px 48px;
   overflow: hidden;
-  border-radius: 20px;
-  padding: 56px 24px 24px;
-  background: linear-gradient(180deg, rgba(16,21,34,.9), rgba(12,15,22,.8));
-  outline: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 20px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
-}
-.hero__bg{ position:absolute; inset:0; z-index:0;
-  background: radial-gradient(800px 400px at 70% -10%, rgba(124,192,255,.14) 0%, transparent 60%);
-}
-.hero__stars{ position:absolute; inset:0; opacity:.75;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.45) 50%, transparent 50%),
-    radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,.35) 50%, transparent 50%),
-    radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,.30) 50%, transparent 50%),
-    radial-gradient(1px 1px at 85% 70%, rgba(255,255,255,.28) 50%, transparent 50%);
 }
 
-/* aurora + vignette */
-.hero::before{
-  content:""; position:absolute; inset:-2px; z-index:0; border-radius:20px;
+.photo-hero__content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 980px);
+  text-align: center;
+  padding: clamp(28px, 5vw, 54px);
+  border-radius: 42px;
   background:
-    radial-gradient(60% 80% at 70% 10%, rgba(124,192,255,.12), transparent 60%),
-    conic-gradient(from 120deg at 30% 40%, rgba(199,156,255,.18), transparent 60%),
-    radial-gradient(40% 60% at 70% 70%, rgba(124,192,255,.10), transparent 60%);
-  filter: blur(18px);
-  animation: aurora 10s linear infinite;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.055)),
+    rgba(21, 15, 34, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 36px 110px rgba(9, 6, 18, 0.34);
+  backdrop-filter: blur(14px);
 }
-.hero::after{ content:""; position:absolute; inset:0; border-radius:20px; z-index:0;
-  box-shadow: inset 0 0 140px rgba(0,0,0,.35); pointer-events:none;
+
+.hero-route {
+  margin: 0 0 18px;
+  color: #ffd3a8;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
 }
-@keyframes aurora { to { transform: rotate(360deg); } }
 
-/* copy */
-.hero__copy{ position:relative; z-index:2; max-width: 680px; margin-left: 8px; }
-.hero__title{
-  margin:0 0 6px; font-size: clamp(28px, 4vw, 40px); font-weight: 900; letter-spacing:.3px;
-  background: linear-gradient(90deg,#fff 0%, #dbe6ff 30%, #fff 60%);
-  -webkit-background-clip:text; background-clip:text; color: transparent;
-  animation: shine 4.5s ease-in-out infinite; text-shadow: 0 1px 0 rgba(0,0,0,.25);
+.photo-hero h1 {
+  max-width: 850px;
+  margin: 0 auto;
+  color: var(--text);
+  font-size: clamp(48px, 7vw, 96px);
+  line-height: 0.93;
+  letter-spacing: -0.075em;
+  font-weight: 950;
+  text-shadow: 0 18px 52px rgba(9, 6, 18, 0.72);
 }
-@keyframes shine{ 0%,100%{filter:drop-shadow(0 0 0 rgba(124,192,255,0))}
-                 50%{filter:drop-shadow(0 0 18px rgba(124,192,255,.25))}}
-.hero__sub{ margin:0 0 16px; color: var(--muted); }
-.hero__cta{ display:flex; gap:12px; }
-.btn{ display:inline-block; padding: 10px 14px; border-radius: 12px; text-decoration:none; font-weight:700; }
-.btn--primary{ color:#0b0e13; background: linear-gradient(90deg, var(--glow1), var(--glow2));
-  transition: transform .15s, box-shadow .2s; }
-.btn--primary:hover{ box-shadow:0 12px 30px rgba(124,192,255,.25); transform: translateY(-1px);}
-.btn--primary:active{ transform: translateY(0); box-shadow:0 6px 16px rgba(124,192,255,.18); }
-.btn--ghost{ color:var(--text); outline:1px solid rgba(255,255,255,.12); }
-.btn--ghost:hover{ outline-color: rgba(255,255,255,.22); }
 
-/* svg + path */
-.flight-svg{ position:relative; z-index:1; width:100%; height: 280px; margin-top: 16px; }
-.flight-path{ fill:none; stroke: rgba(255,255,255,.35); stroke-width:3; stroke-linecap:round; stroke-dasharray: 8 10; }
-.flight-path--accent{ fill:none; stroke: url(#flight-grad); stroke-width:3; stroke-linecap:round;
-  filter: drop-shadow(0 0 8px rgba(124,192,255,.25)); }
+.hero-copy {
+  max-width: 600px;
+  margin: 22px auto 42px;
+  color: var(--text-soft);
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.7;
+  font-weight: 650;
+  text-shadow: 0 8px 26px rgba(9, 6, 18, 0.62);
+}
 
-/* clouds */
-.cloud{
-  position:absolute; z-index:1; top: 90px; width: 220px; height: 70px; opacity:.25;
+.hero-countdown {
+  width: min(100%, 800px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.hero-time-block {
+  min-height: 148px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 26px;
   background:
-    radial-gradient(45px 35px at 35px 35px, #fff 40%, transparent 41%),
-    radial-gradient(70px 45px at 105px 30px, #fff 40%, transparent 41%),
-    radial-gradient(40px 30px at 175px 40px, #fff 40%, transparent 41%);
-  filter: blur(2px); border-radius: 60px;
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.075)),
+    rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 18px 48px rgba(9, 6, 18, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
 }
-.cloud--1{ left:-260px; animation: cloudMove 26s linear infinite; }
-.cloud--2{ top: 50px; left:-300px; transform: scale(1.2); animation: cloudMove 30s linear infinite; }
-.cloud--3{ top: 140px; left:-340px; transform: scale(.9); animation: cloudMove 28s linear infinite; }
-@keyframes cloudMove { 0%{ transform: translateX(0) } 100%{ transform: translateX(1500px) } }
 
-.hero__stars::after{
-  content:""; position:absolute; inset:0;
-  background-image:
-    radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,.6) 50%, transparent 50%),
-    radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,.5) 50%, transparent 50%);
-  animation: twinkle 5s ease-in-out infinite alternate;
+.hero-time-value {
+  color: #ffffff;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 1;
+  font-weight: 950;
+  letter-spacing: -0.07em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 14px 36px rgba(9, 6, 18, 0.34);
 }
-@keyframes twinkle { from{opacity:.25} to{opacity:.6} }
+
+.hero-time-label {
+  margin-top: 12px;
+  color: rgba(255, 211, 168, 0.92);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.hero-date {
+  margin: 26px 0 0;
+  color: rgba(255, 248, 243, 0.78);
+  font-size: 15px;
+  font-weight: 850;
+  text-shadow: 0 8px 26px rgba(9, 6, 18, 0.62);
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.hero-actions a {
+  min-width: 176px;
+}
+
+.hero-shortcuts {
+  width: min(100%, 760px);
+  margin: 52px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.hero-shortcuts a {
+  display: grid;
+  place-items: center;
+  gap: 9px;
+  color: rgba(255, 248, 243, 0.82);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 850;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.hero-shortcuts a:hover {
+  transform: translateY(-3px);
+  color: #ffffff;
+}
+
+.hero-shortcuts span {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffd3a8;
+}
+
+@media (max-width: 820px) {
+  .photo-hero {
+    padding: 70px 18px 46px;
+  }
+
+  .hero-countdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-shortcuts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-hero__content {
+    border-radius: 28px;
+  }
+
+  .photo-hero h1 {
+    font-size: 44px;
+  }
+
+  .hero-countdown {
+    gap: 12px;
+  }
+
+  .hero-time-block {
+    min-height: 124px;
+    border-radius: 20px;
+  }
+
+  .hero-actions {
+    display: grid;
+  }
+
+  .hero-actions a {
+    width: 100%;
+  }
+}
 `;
